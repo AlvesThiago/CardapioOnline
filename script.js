@@ -8,7 +8,9 @@ const closeModalBtn = document.getElementById("close-modal-btn")
 const cartCounter = document.getElementById("cart-count")
 const addressInput = document.getElementById("address")
 const addressWarn = document.getElementById("address-warn")
-
+const cepInput = document.getElementById("cep")
+const cepWarn = document.getElementById("cep-warn")
+const nameInput = document.getElementById("name-input")
 
 
 let cart = [];
@@ -65,7 +67,7 @@ function addToCart(name, price){
         position: "right", // `left`, `center` or `right`
         stopOnFocus: true, // Prevents dismissing of toast on hover
         style: {
-          background: "#00ff7f",
+          background: "#65B741",
         },
     }).showToast();
     
@@ -138,6 +140,8 @@ function removeItemCart(name) {
     }
 }
 
+
+
 addressInput.addEventListener("input", function(event) {
     let inputValue = event.target.value;
 
@@ -147,6 +151,18 @@ addressInput.addEventListener("input", function(event) {
     }
 
 })
+
+cepInput.addEventListener("input", function(event){
+    let inputValueCep = event.target.value;
+
+    if (inputValueCep !== "") {
+        cepInput.classList.remove("border-red-500")
+        cepWarn.classList.add("hidden")
+    }
+    
+})
+
+
 
 checkoutBtn.addEventListener("click", function(){
     
@@ -175,6 +191,18 @@ checkoutBtn.addEventListener("click", function(){
         return;
     }
 
+    if(cepInput.value === ""){
+        cepWarn.classList.remove("hidden")
+        cepInput.classList.add("border-red-500")
+        return;
+    }
+
+
+
+    // Calcular o total do valor de todos os produtos escolhidos
+    const total = cart.reduce((acc, item) => {
+    return acc + (item.price * item.quantity);
+    }, 0);
 
     //Enviar para API do Whats
 
@@ -183,19 +211,25 @@ checkoutBtn.addEventListener("click", function(){
         let precoTotal = item.price * item.quantity;
 
         return(
-            `---------------------------
-            ${item.name} 
-            Quantidade: (${item.quantity})  
-            Preço: R$${precoTotal.toFixed(2)}  
-              
-            `
-        )
-    }) .join("")
+            `${item.name}\n` +
+            `Quantidade: (${item.quantity})\n` +
+            `Preço: R$${precoTotal.toFixed(2)}\n\n`
+        );
 
-    const message = encodeURIComponent(cartItems)
-    const phone = "5511961916701"
+    }) .join("");
 
-    window.open(`https://wa.me/${phone}?text=${message} Endereço: ${addressInput.value}`)
+    const totalMessage = `*Total: R$${total.toFixed(2)}*\n\n`;
+
+    const nameInputValue = `Nome: ${nameInput.value} \n`;
+    
+    const endereco = `Endereço: ${addressInput.value}\n`;
+    const cep = `CEP: ${cepInput.value}`;
+
+    const message = encodeURIComponent(`${cartItems}${totalMessage}${nameInputValue}${endereco}${cep}`);
+
+    const phone = "5511961916701";
+
+    window.open(`https://wa.me/${phone}?text=${message}`);
 
     cart = [];
     updateCartModal();
