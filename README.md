@@ -13,7 +13,7 @@ os pedidos são encaminhados automaticamente para a loja via WhatsApp, simplific
 
 ## Como Usar
 1. Acesse a plataforma através do navegador web.
-[Site](https://cardapio-online-sage.vercel.app/)
+[Site](https://cardapio-online-henna.vercel.app/)
 
 ## Contribuição
 
